@@ -1,0 +1,38 @@
+Options explored:
+
+1. Running an on-heap cache on the tomcat versus allowing Varnish handle all caching
+The Varnish caching solution is nice because...
+    1.  Varnish seems to include distributed caching, whereas an on-heap cache in
+        the tomcat would have to get 'lucky' to be hit again for the same
+        predicate and input.
+    2.  Varnish can be setup to act as a negative cache, so that requests for
+        predicates that don't exist can 404 without ever hitting our tomcat.  Compare
+        this with a very expensive call that has to go all the way to MariaDB just
+        so it can determine there is no predicate stored under that id.
+    3.  Cache hits with Varnish don't consume any resources on the tomcat.
+Downsides of Varnish...
+    1.  More nodes to deploy/maintain/monitor
+
+On-heap caching solution is nice because
+    1.  Simpler deployment.
+    2.  Varnish be default allows you to cache 'GET' calls, but with some tweaking can
+        be made to cache 'POST' calls.  The 'GET' call I've defined to evaluate a predicate is kind
+        of funky with all the different GET parameters that need to be passed.  Eliminating
+        Varnish and just using a simple on-heap cache would make POST a tempting alternative
+        to GET.
+
+
+"Load related" variables to consider:
+
+When a certain predicate is excecuted, is it likely to be executed again in the next N minutes?  Will those
+follow-on executes pass the same input parameters?
+If the different combinations of input parameters we see are 'large', then caching the 'GET' in Varnish may not be
+effective.  However, if a particular predicate just repeatedly sees the same input (eg. HTTP Status=200, HTTP Method=GET)
+then the HTTP caching approach could work quite well.
+
+"Caches Everywhere" solution
+Combining both the on-heap cache along with the HTTP cache, we can cover all combinations of behavior...
+1.  A predicate that is run frequently, but always with distinct input values.
+   a) The tomcat will have it already in-memory, so at least we aren't hitting the DB every time
+2.  A predicate that is run frequently, and always with the same input values
+   a) HTTP cache handles this before ever hitting the tomcat
