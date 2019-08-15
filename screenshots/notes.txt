@@ -1,0 +1,11 @@
+How this UI handles the 'Execute' button could work a couple different ways...
+
+1.  Execute actually submits the predicate with a 'PUT' to our backend service,
+    and immediately executes a 'GET' to get the output, and finally a 'DELETE'.
+    This wouldn't be the fastest or most efficient, but at least we only have 1
+    implementation of our application...
+2.  The implementation of the PredicateEvaluationService is somehow exported
+    to the client-side so it can execute locally in the browser.  This would
+    avoid the blatent API abuse of #1.
+
+The 'Save' button is a lot more simple... it invokes the 'PUT'/'POST' API.

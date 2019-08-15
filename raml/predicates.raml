@@ -18,6 +18,15 @@
             application/json:
               example: |
                 {"message": "Predicate not found"}
+    delete:
+      description: Deletes an existing predicate
+      responses:
+        204:
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "Predicate not found"}
     put:
       description: Replaces the predicate at a given id.
       body:
