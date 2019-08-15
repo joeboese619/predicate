@@ -1,0 +1,54 @@
+/predicates:
+  /{predicateId}:
+    description: Provides operations to create and evaluate a predicate
+    get:
+      description: Evaluates an existing predicate against a set of inputs.
+      responses:
+        200:
+          body:
+            application/json:
+            type: |
+                TODO....
+            example: |
+            {
+               "predicateMatch": "false",
+            }
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "Predicate not found"}
+    put:
+      description: Replaces the predicate at a given id.
+      body:
+        application/json:
+        type: |
+        {
+            TODO....
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+        }
+      }
+    example: |
+      {
+          {
+              "logicalOr": {
+                  "lhs" : {
+                      "HTTP_STATUS_GREATER_THAN": 499,
+                  },
+                  "rhs" : {
+                      "logicalAnd": {
+                          "lhs" : {
+                              "HTTP_METHOD_EQUALS" : "GET"
+                          },
+                          "rhs" : {
+                              "HTTP_STATUS_NOT_EQUAL" : 200
+                          }
+                      }
+                  }
+              }
+          }
+      }
+      
